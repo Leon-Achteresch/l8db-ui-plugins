@@ -30,5 +30,6 @@ export const SHADOWED_GLOBALS = [
   "confirm",
   "prompt",
   "Function",
+  "eval",
   "process",
 ] as const;

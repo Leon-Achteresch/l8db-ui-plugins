@@ -44,7 +44,7 @@ UI-Plugins laufen im Fenster von l8db, eingeschränkt durch feste Regeln:
 - Ins Netz kommt ein Plugin nur über `ctx.http`, und die Person muss das Ziel freigeben.
 - Langsame oder fehlerhafte Slots schaltet l8db ab.
 
-Diese Regeln ersetzen keine Sandbox. Installiere nur Plugins, deren Code du gelesen hast oder denen du vertraust. Jedes Plugin in diesem Repo wird vor dem Merge geprüft. Beim Installieren vergleicht die Galerie den SHA-256 jeder Datei mit dem Katalog.
+Diese Regeln ersetzen keine Sandbox. Sie fangen Versehen ab, aber wer absichtlich tarnt, etwa über berechnete Eigenschaftsnamen, kommt an ihnen vorbei. Darum liest ein Mensch jeden Pull Request, bevor ein Plugin in die Galerie kommt. Beim Installieren vergleicht die Galerie den SHA-256 jeder Datei mit dem Katalog. Installiere nur Plugins, deren Code du gelesen hast oder denen du vertraust.
 
 ## Beitragen
 

@@ -29,6 +29,14 @@ Der Check übersetzt jedes Plugin mit denselben Regeln wie l8db. Dann ruft er je
 - Jeder Slot muss mit den Beispieldaten mindestens einmal etwas liefern. Passt nichts, ergänze in `scripts/samples.ts` passende Tabellen, Spalten oder Tabs, statt das Plugin zu verbiegen.
 - Der Screenshot darf keine Kopie eines anderen Plugins sein.
 
+## Review
+
+Der Check fängt Versehen ab, aber keine getarnten Zugriffe. Wer einen Pull Request prüft, liest deshalb den Code und lehnt ab, wenn eines davon vorkommt:
+
+- Zugriffe auf `window`, `document` oder Netzwerk über Umwege: berechnete Eigenschaftsnamen wie `["constr" + "uctor"]`, `Reflect`, `Proxy`, Event-Objekte (`event.view`, `event.target.ownerDocument`) oder DOM-Knoten;
+- Netzwerk außerhalb von `ctx.http`;
+- versteckte Logik wie lange Zeichenketten, Base64 oder `atob`.
+
 ## Screenshots
 
 Der Screenshot zeigt das Plugin in der echten App: helles Theme, Fenster 1440×860 bei doppelter Auflösung, also 2880×1720 Pixel. Plugins für die Tab-Leiste dürfen einen Ausschnitt zeigen.

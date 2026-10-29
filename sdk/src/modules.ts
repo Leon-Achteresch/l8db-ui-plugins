@@ -24,6 +24,26 @@ type Render = (type: unknown, props: unknown, key?: unknown) => unknown;
 type Component = ((props: unknown) => unknown) & { displayName?: string };
 
 const guarded = new WeakMap<Component, Component>();
+let slotDepth = 0;
+
+export function withoutHooks<T>(call: () => T): T {
+  slotDepth++;
+  try {
+    return call();
+  } finally {
+    slotDepth--;
+  }
+}
+
+function hook(name: string, fn: (...args: unknown[]) => unknown) {
+  return (...args: unknown[]) => {
+    if (slotDepth > 0)
+      throw new Error(
+        `${name} ist direkt in Slot-Funktionen nicht erlaubt. Gib eine eigene Komponente als JSX zurück und nutze ${name} dort.`,
+      );
+    return fn(...args);
+  };
+}
 
 function guard(type: unknown) {
   if (
@@ -61,7 +81,14 @@ export function createPluginModules(
     };
   return Object.freeze({
     react: Object.freeze({
-      ...Object.fromEntries(REACT_EXPORTS.map((name) => [name, source[name]])),
+      ...Object.fromEntries(
+        REACT_EXPORTS.map((name) => [
+          name,
+          name.startsWith("use")
+            ? hook(name, source[name] as (...args: unknown[]) => unknown)
+            : source[name],
+        ]),
+      ),
       memo: (type: unknown, compare?: unknown) => (source.memo as Render)(guard(type), compare),
     }),
     "react/jsx-runtime": Object.freeze({

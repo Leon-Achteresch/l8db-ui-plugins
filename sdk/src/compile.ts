@@ -105,7 +105,7 @@ function checkTokens(tokens: Token[]): CompileError | null {
       if (BLOCKED_PROPERTIES.has(token.value))
         return { message: `"${token.value}" ist in Plugins nicht erlaubt.`, line: token.line };
       const member = isPunct(before, ".", "?.");
-      const key = isPunct(before, "{", ",") && isPunct(after, ":", "(");
+      const key = isPunct(before, "{", ",") && isPunct(after, ":");
       if (!member && !key && BLOCKED_GLOBALS.has(token.value))
         return {
           message: `"${token.value}" ist in Plugins nicht erlaubt. Nutze die Bausteine und ctx.http aus "@l8db/ui".`,

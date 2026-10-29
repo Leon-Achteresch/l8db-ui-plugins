@@ -79,12 +79,12 @@ function requiredText(value: unknown, path: string, max: number): string {
 }
 
 export function parseHttpPattern(entry: string): HttpPattern | null {
-  const trimmed = entry.trim().toLowerCase();
+  const trimmed = entry.trim();
   if (!trimmed || trimmed.length > 300) return null;
-  if (/^[a-z][a-z0-9+.-]*:\/\//.test(trimmed) && !trimmed.startsWith("https://")) return null;
-  const rest = trimmed.replace(/^https:\/\//, "");
+  if (/^[a-z][a-z0-9+.-]*:\/\//i.test(trimmed) && !/^https:\/\//i.test(trimmed)) return null;
+  const rest = trimmed.replace(/^https:\/\//i, "");
   const slash = rest.indexOf("/");
-  const authority = slash < 0 ? rest : rest.slice(0, slash);
+  const authority = (slash < 0 ? rest : rest.slice(0, slash)).toLowerCase();
   const path = slash < 0 ? "/" : rest.slice(slash);
   const match = /^(\*\.)?([a-z0-9-]+(\.[a-z0-9-]+)*)(:(\d{1,5}))?$/.exec(authority);
   if (!match || /[?#\s]/.test(path)) return null;
@@ -114,8 +114,9 @@ export function httpPatternMatches(pattern: string, url: string): boolean {
   const path = target.pathname;
   const pathOk =
     parsed.path === "/" ||
-    path === parsed.path ||
-    path.startsWith(parsed.path.endsWith("/") ? parsed.path : `${parsed.path}/`);
+    (!/%2e|%2f|%5c/i.test(path) &&
+      (path === parsed.path ||
+        path.startsWith(parsed.path.endsWith("/") ? parsed.path : `${parsed.path}/`)));
   return hostOk && portOk && pathOk;
 }
 
