@@ -21,6 +21,7 @@ import {
   validateTabGroup,
   validateTone,
   validateToolbarActions,
+  withoutHooks,
 } from "../sdk/src/index";
 import { SAMPLES, TABS } from "./samples";
 import { STUB_SDK } from "./sdk";
@@ -35,7 +36,16 @@ const SIGNATURES: Record<string, number[]> = {
   jpg: [0xff, 0xd8, 0xff],
   webp: [0x52, 0x49, 0x46, 0x46],
 };
-const CELL_BUDGET_MS = 2;
+const BUDGETS_MS: Record<string, number> = {
+  "grid.cell": 2,
+  "tabs.item": 2,
+  "grid.rowTone": 1,
+  "tabs.group": 1,
+  "split.layout": 5,
+  "grid.columns": 25,
+  "table.toolbar": 25,
+  "table.detailTabs": 25,
+};
 const NO_TIMERS = Object.fromEntries(
   ["setTimeout", "setInterval", "requestAnimationFrame"].map((name) => [name, () => 0]),
 );
@@ -91,7 +101,7 @@ function optionVariants(definition: PluginDefinition): OptionValues[] {
   return variants;
 }
 
-type Run = { timings: number[]; coverage: Record<string, number> };
+type Run = { timings: Record<string, number[]>; coverage: Record<string, number> };
 
 function message(error: unknown) {
   return error instanceof Error ? error.message : String(error);
@@ -102,24 +112,36 @@ async function exercise(slots: Slots, options: OptionValues, run: Run) {
   const hit = (slot: string, produced: boolean) => {
     run.coverage[slot] = (run.coverage[slot] ?? 0) + (produced ? 1 : 0);
   };
+  const timed = <A extends unknown[], R>(slot: string, fn: (...args: A) => R, ...args: A): R => {
+    const started = performance.now();
+    const result = withoutHooks(() => fn(...args));
+    run.timings[slot] ??= [];
+    run.timings[slot].push(performance.now() - started);
+    return result;
+  };
   let step = "";
   try {
     for (const { table: info, columns, rows } of SAMPLES) {
       if (grid?.columns) {
         step = `grid.columns(${info.id})`;
-        hit("grid.columns", validateColumnPatches(grid.columns(info, columns)).length > 0);
+        hit(
+          "grid.columns",
+          validateColumnPatches(timed("grid.columns", grid.columns, info, columns)).length > 0,
+        );
       }
       if (grid?.rowTone)
         for (const [rowIndex, row] of rows.entries()) {
           step = `grid.rowTone(${info.id}, Zeile ${rowIndex})`;
-          hit("grid.rowTone", validateTone(grid.rowTone(row, info)) !== undefined);
+          hit(
+            "grid.rowTone",
+            validateTone(timed("grid.rowTone", grid.rowTone, row, info)) !== undefined,
+          );
         }
       if (grid?.cell)
         for (const [rowIndex, row] of rows.entries())
           for (const column of columns) {
             step = `grid.cell(${info.id}, Zeile ${rowIndex}, Spalte ${column.id})`;
-            const started = performance.now();
-            const output = grid.cell({
+            const output = timed("grid.cell", grid.cell, {
               value: row[column.id],
               row,
               column,
@@ -128,13 +150,12 @@ async function exercise(slots: Slots, options: OptionValues, run: Run) {
               rows,
               options,
             });
-            run.timings.push(performance.now() - started);
             hit("grid.cell", output !== undefined);
             if (output !== undefined) render(output);
           }
       if (table?.toolbar) {
         step = `table.toolbar(${info.id})`;
-        const actions = validateToolbarActions(table.toolbar(info));
+        const actions = validateToolbarActions(timed("table.toolbar", table.toolbar, info));
         hit("table.toolbar", actions.length > 0);
         for (const action of actions) {
           step = `table.toolbar(${info.id}) → ${action.id}.run`;
@@ -162,7 +183,7 @@ async function exercise(slots: Slots, options: OptionValues, run: Run) {
       }
       if (table?.detailTabs) {
         step = `table.detailTabs(${info.id})`;
-        const detailTabs = validateDetailTabs(table.detailTabs(info));
+        const detailTabs = validateDetailTabs(timed("table.detailTabs", table.detailTabs, info));
         hit("table.detailTabs", detailTabs.length > 0);
         for (const tab of detailTabs) {
           step = `table.detailTabs(${info.id}) → ${tab.id}.render`;
@@ -183,12 +204,12 @@ async function exercise(slots: Slots, options: OptionValues, run: Run) {
     for (const tab of TABS) {
       if (tabs?.group) {
         step = `tabs.group(${tab.key})`;
-        hit("tabs.group", validateTabGroup(tabs.group(tab)) !== undefined);
+        hit("tabs.group", validateTabGroup(timed("tabs.group", tabs.group, tab)) !== undefined);
       }
       if (tabs?.item)
         for (const active of [true, false]) {
           step = `tabs.item(${tab.key}, active ${active})`;
-          const output = tabs.item({
+          const output = timed("tabs.item", tabs.item, {
             tab,
             active,
             Default: () => React.createElement("span", null, tab.title),
@@ -201,7 +222,11 @@ async function exercise(slots: Slots, options: OptionValues, run: Run) {
       for (const count of [2, 3, 4])
         for (const orientation of ["horizontal", "vertical"] as const) {
           step = `split.layout(${count}, ${orientation})`;
-          hit("split.layout", validateSplitLayout(split.layout(count, orientation)) !== undefined);
+          hit(
+            "split.layout",
+            validateSplitLayout(timed("split.layout", split.layout, count, orientation)) !==
+              undefined,
+          );
         }
   } catch (error) {
     throw new Error(`${step}: ${message(error)}`);
@@ -262,7 +287,7 @@ export async function checkPlugin(dir: string, root = PLUGINS): Promise<CheckedP
     if (!definition.author) errors.push("author fehlt.");
     if (definition.name === definition.id) errors.push("name fehlt.");
     const groups = new Set<string>();
-    const run: Run = { timings: [], coverage: {} };
+    const run: Run = { timings: {}, coverage: {} };
     const defaults = resolveOptions(definition.options, undefined);
     for (const options of optionVariants(definition)) {
       const changed = Object.entries(options)
@@ -283,7 +308,7 @@ export async function checkPlugin(dir: string, root = PLUGINS): Promise<CheckedP
       }
     }
     result.groups = [...groups].sort();
-    result.cellP95 = percentile(run.timings, 0.95);
+    result.cellP95 = percentile(run.timings["grid.cell"] ?? [], 0.95);
     result.cells = run.coverage["grid.cell"] ?? null;
     if (result.groups.length === 0) errors.push("Das Plugin füllt keinen Slot.");
     for (const [slot, count] of Object.entries(run.coverage))
@@ -291,10 +316,11 @@ export async function checkPlugin(dir: string, root = PLUGINS): Promise<CheckedP
         errors.push(
           `${slot} liefert mit den Beispieldaten nie etwas. Ergänze passende Tabellen, Spalten oder Tabs in scripts/samples.ts, damit der Check deinen Code ausführt.`,
         );
-    if (result.cellP95 !== null && result.cellP95 > CELL_BUDGET_MS)
-      errors.push(
-        `grid.cell ist zu langsam: p95 ${result.cellP95.toFixed(3)} ms, erlaubt ${CELL_BUDGET_MS} ms.`,
-      );
+    for (const [slot, timings] of Object.entries(run.timings)) {
+      const p95 = percentile(timings, 0.95);
+      if (p95 !== null && p95 > BUDGETS_MS[slot])
+        errors.push(`${slot} ist zu langsam: p95 ${p95.toFixed(3)} ms, erlaubt ${BUDGETS_MS[slot]} ms.`);
+    }
   } catch (error) {
     errors.push(message(error));
   }

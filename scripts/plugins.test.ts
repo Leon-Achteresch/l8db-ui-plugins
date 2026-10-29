@@ -117,3 +117,26 @@ export default definePlugin({ ${header("test.slow")}
   );
   expect(result.errors.join("\n")).toContain("grid.cell ist zu langsam");
 });
+
+test("flags slow row tones", async () => {
+  const result = await plugin(
+    "test.slowtone",
+    `import { definePlugin } from "@l8db/ui";
+export default definePlugin({ ${header("test.slowtone")}
+  slots: { grid: { rowTone: () => { const end = performance.now() + 1.5; while (performance.now() < end) {} return "info"; } } } });`,
+  );
+  expect(result.errors.join("\n")).toContain("grid.rowTone ist zu langsam");
+});
+
+test("rejects hooks called directly in slot functions like l8db does", async () => {
+  const result = await plugin(
+    "test.hook",
+    `import { definePlugin } from "@l8db/ui";
+import { useState } from "react";
+export default definePlugin({ ${header("test.hook")}
+  slots: { grid: { rowTone: () => { const [tone] = useState("info"); return tone; } } } });`,
+  );
+  expect(result.errors.join("\n")).toContain(
+    "useState ist direkt in Slot-Funktionen nicht erlaubt",
+  );
+});
