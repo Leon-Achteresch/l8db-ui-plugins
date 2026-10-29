@@ -1,0 +1,131 @@
+{
+  "schemaVersion": 1,
+  "plugins": [
+    {
+      "id": "l8db.column-presets",
+      "name": "Spalten-Vorgaben",
+      "description": "Heftet Primärschlüssel links an, blendet technische Spalten aus und zeigt lesbare Spaltennamen. Eigene Anpassungen in l8db gehen immer vor.",
+      "version": "1.0.0",
+      "author": "l8db",
+      "file": "plugins/l8db.column-presets/plugin.tsx",
+      "sha256": "4f139a7cdb80ecb4f3272033d6dd16ff9a0fb9a4f8947c2a270ce471d2d0c238",
+      "screenshot": "plugins/l8db.column-presets/screenshot.png",
+      "tags": [
+        "grid"
+      ],
+      "http": []
+    },
+    {
+      "id": "l8db.copy-as-markdown",
+      "name": "Als Markdown kopieren",
+      "description": "Fügt jeder Tabelle einen Knopf hinzu, der markierte oder geladene Zeilen als Markdown-Tabelle kopiert – fertig für Tickets, Wikis und Chats.",
+      "version": "1.0.0",
+      "author": "l8db",
+      "file": "plugins/l8db.copy-as-markdown/plugin.tsx",
+      "sha256": "85891612aa13c8a0296081ecd0c51fbfc605bdf2b4eb5782ec5b10de7ad38cbd",
+      "screenshot": "plugins/l8db.copy-as-markdown/screenshot.png",
+      "tags": [
+        "table"
+      ],
+      "http": []
+    },
+    {
+      "id": "l8db.kanban",
+      "name": "Kanban-Board",
+      "description": "Fügt Tabellen mit Statusspalte einen Tab „Kanban“ hinzu: Zeilen als Karten, gruppiert nach Status.",
+      "version": "1.0.0",
+      "author": "l8db",
+      "file": "plugins/l8db.kanban/plugin.tsx",
+      "sha256": "a668ab793ab977a30d8210ec68b36a611f787a7edd6aeda02576d18ccc097636",
+      "screenshot": "plugins/l8db.kanban/screenshot.png",
+      "tags": [
+        "table"
+      ],
+      "http": []
+    },
+    {
+      "id": "l8db.money-and-dates",
+      "name": "Beträge und Datum",
+      "description": "Formatiert Geldbeträge als Währung, zeigt Zeitpunkte relativ an und markiert überfällige oder bald fällige Termine.",
+      "version": "1.0.0",
+      "author": "l8db",
+      "file": "plugins/l8db.money-and-dates/plugin.tsx",
+      "sha256": "6b4489442f1ba598d49681c3c573ff23e24b7e63cf54acca5909cec69915ee7f",
+      "screenshot": "plugins/l8db.money-and-dates/screenshot.png",
+      "tags": [
+        "grid"
+      ],
+      "http": []
+    },
+    {
+      "id": "l8db.prod-tab-warning",
+      "name": "Produktions-Warnung im Tab",
+      "description": "Markiert jeden Tab einer Produktionsverbindung mit einem roten Hinweis, Staging auf Wunsch gelb. So arbeitet niemand versehentlich live.",
+      "version": "1.0.0",
+      "author": "l8db",
+      "file": "plugins/l8db.prod-tab-warning/plugin.tsx",
+      "sha256": "bf00ae57c13bd1d42c7521670edb91277e417f2fe416e77478aec4c3a463e171",
+      "screenshot": "plugins/l8db.prod-tab-warning/screenshot.png",
+      "tags": [
+        "tabs"
+      ],
+      "http": []
+    },
+    {
+      "id": "l8db.progress-bars",
+      "name": "Fortschrittsbalken",
+      "description": "Zeigt Prozent-, Quoten- und Zufriedenheitsspalten als Balken mit Ampelfarben statt als nackte Zahl.",
+      "version": "1.0.0",
+      "author": "l8db",
+      "file": "plugins/l8db.progress-bars/plugin.tsx",
+      "sha256": "2c0b4ee85891dab5f3ad72614719f3733bdfa89f680f36aa82201915377d95db",
+      "screenshot": "plugins/l8db.progress-bars/screenshot.png",
+      "tags": [
+        "grid"
+      ],
+      "http": []
+    },
+    {
+      "id": "l8db.split-workbench",
+      "name": "Split-Arbeitsplatz",
+      "description": "Ordnet geteilte Ansichten an, legt nicht für jede Teilung eine Gruppe an und bringt Master-Detail-Vorlagen mit: Auswahl links filtert die Bereiche rechts.",
+      "version": "1.0.0",
+      "author": "l8db",
+      "file": "plugins/l8db.split-workbench/plugin.tsx",
+      "sha256": "472762c570ddf4e9e322d7a20ba52a10541c785591ce27134d679f0711895859",
+      "screenshot": "plugins/l8db.split-workbench/screenshot.png",
+      "tags": [
+        "split"
+      ],
+      "http": []
+    },
+    {
+      "id": "l8db.status-pills",
+      "name": "Status als Pills",
+      "description": "Zeigt Status- und Prioritätsspalten als farbige Pills. Auf Wunsch werden auch ganze Zeilen nach ihrem Status eingefärbt.",
+      "version": "1.0.0",
+      "author": "l8db",
+      "file": "plugins/l8db.status-pills/plugin.tsx",
+      "sha256": "d2199151828617fb7a24ecb4e3f84dc0528b4b299f16bdf0ba1440928e6c1039",
+      "screenshot": "plugins/l8db.status-pills/screenshot.png",
+      "tags": [
+        "grid"
+      ],
+      "http": []
+    },
+    {
+      "id": "l8db.tab-groups",
+      "name": "Tabs nach Schema",
+      "description": "Gruppiert Tabellen-Tabs nach Schema mit farbigem Label, öffnet neue Tabs neben dem aktiven und steuert den Schließen-Knopf.",
+      "version": "1.0.0",
+      "author": "l8db",
+      "file": "plugins/l8db.tab-groups/plugin.tsx",
+      "sha256": "4bb8ea5c3c5de00ec445ad10395d0bcde2574dfc575833800c0f59596bb2966d",
+      "screenshot": "plugins/l8db.tab-groups/screenshot.png",
+      "tags": [
+        "tabs"
+      ],
+      "http": []
+    }
+  ]
+}
