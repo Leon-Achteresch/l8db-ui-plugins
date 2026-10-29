@@ -36,15 +36,15 @@ Mit `options` wird ein Plugin in den Einstellungen von l8db für jede Person ein
 
 ## Sicherheit
 
-UI-Plugins laufen im Fenster von l8db, eingeschränkt durch feste Regeln:
+UI-Plugins laufen im Fenster von l8db und haben damit dieselben Rechte wie die App. Feste Regeln schränken sie ein:
 
 - Imports gibt es nur aus `react` und `@l8db/ui`.
 - `window`, `document`, `fetch` und `localStorage` sind gesperrt, ebenso `<script>`, `<iframe>` und `<style>`.
 - Plugins sehen Zeilen nur als schreibgeschützte Kopien.
-- Ins Netz kommt ein Plugin nur über `ctx.http`, und die Person muss das Ziel freigeben.
+- Für das Netz ist `ctx.http` vorgesehen, und die Person muss das Ziel freigeben.
 - Langsame oder fehlerhafte Slots schaltet l8db ab.
 
-Diese Regeln ersetzen keine Sandbox. Sie fangen Versehen ab, aber wer absichtlich tarnt, etwa über berechnete Eigenschaftsnamen, kommt an ihnen vorbei. Darum liest ein Mensch jeden Pull Request, bevor ein Plugin in die Galerie kommt. Beim Installieren vergleicht die Galerie den SHA-256 jeder Datei mit dem Katalog. Installiere nur Plugins, deren Code du gelesen hast oder denen du vertraust.
+Diese Regeln ersetzen keine Sandbox. Sie fangen Versehen ab, aber wer absichtlich tarnt, etwa über berechnete Eigenschaftsnamen, kommt an ihnen vorbei und kann dann alles, was l8db kann, bis zu gespeicherten Passwörtern. Darum liest ein Mensch jeden Pull Request, bevor ein Plugin in die Galerie kommt. Beim Installieren vergleicht die Galerie den SHA-256 jeder Datei mit dem Katalog. Installiere nur Plugins, deren Code du gelesen hast oder denen du vertraust.
 
 ## Beitragen
 
