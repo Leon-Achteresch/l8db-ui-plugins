@@ -1,0 +1,22 @@
+{
+  "name": "l8db-ui-plugins",
+  "private": true,
+  "type": "module",
+  "description": "UI-Plugins für l8db: Tabelle, Tabs und Split-Ansicht selbst gestalten.",
+  "license": "Apache-2.0",
+  "scripts": {
+    "check": "tsc --noEmit && bun scripts/check.ts",
+    "readme": "bun scripts/readme.ts",
+    "catalog": "bun scripts/catalog.ts",
+    "sync-sdk": "bun scripts/sync-sdk.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.3.10",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "sucrase": "^3.35.0",
+    "typescript": "~6.0.3"
+  }
+}
